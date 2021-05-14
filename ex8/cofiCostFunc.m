@@ -41,8 +41,21 @@ Theta_grad = zeros(size(Theta));
 %
 
 
+J = 0.5*sum(((X*Theta').*R-Y).^2, 'all')+(lambda/2)*(sum(Theta.^2, 'all')+sum(X.^2, 'all'));
 
+for i = 1:num_movies
+    idx = find(R(i,:)==1);
+    Theta_temp = Theta(idx,:); %only users who rated contribute
+    Y_temp = Y(i,idx);
+    X_grad(i,:) = (X(i,:)*Theta_temp'-Y_temp)*Theta_temp + lambda*X(i,:);
+end
 
+for i = 1:num_users
+    idx = find(R(:,i)==1);
+    X_temp = X(idx,:); %only movies get rated by this user contribute
+    Y_temp = Y(idx,i);
+    Theta_grad(i,:) = (X_temp*Theta(i,:)'-Y_temp)'*X_temp + lambda*Theta(i,:);
+end
 
 
 
